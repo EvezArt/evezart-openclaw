@@ -10,12 +10,31 @@ primary_region = "lax"
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = true
+  auto_stop_machines = false
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ["app"]
 
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/health"
+    protocol = "http"
+    timeout = "5s"
+
+[mounts]
+  source = "openclaw_data"
+  destination = "/data"
+
 [[vm]]
-  memory = "256mb"
+  memory = "512mb"
   cpu_kind = "shared"
   cpus = 1
+
+# Redundancy: deploy to lax + ord for US coverage
+[[regions]]
+  code = "lax"
+
+[[regions]]
+  code = "ord"
