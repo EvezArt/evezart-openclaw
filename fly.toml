@@ -16,7 +16,7 @@ primary_region = "lax"
   processes = ["app"]
 
   [[http_service.checks]]
-    grace_period = "10s"
+    grace_period = "15s"
     interval = "30s"
     method = "GET"
     path = "/health"
@@ -31,10 +31,3 @@ primary_region = "lax"
   memory = "512mb"
   cpu_kind = "shared"
   cpus = 1
-
-# Redundancy: deploy to lax + ord for US coverage
-[[regions]]
-  code = "lax"
-
-[[regions]]
-  code = "ord"
