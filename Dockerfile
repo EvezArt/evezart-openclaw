@@ -1,53 +1,27 @@
-FROM node:22-bookworm-slim
-
-# Install system deps
-RUN apt-get update && apt-get install -y \
-    curl git python3 python3-pip sqlite3 ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Bun
-RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH="/root/.bun/bin:${PATH}"
-
-# Enable pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy openclaw fork (pre-built from EvezArt/openclaw-fork)
-# We pull directly from npm registry
-RUN npm install -g openclaw 2>/dev/null || \
-    npx --yes openclaw@latest --version 2>/dev/null || \
-    echo "openclaw install from npm attempted"
+RUN apt-get update && apt-get install -y \
+    curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy our personalized config and workspace
-COPY config/openclaw.json /root/.openclaw/openclaw.json
-COPY workspace/ /root/.openclaw/workspace/
-COPY skills/ /root/.openclaw/skills/
-COPY hooks/ /root/.openclaw/hooks/
+COPY requirements.txt .
+RUN pip install --no-cache-dir \
+    fastapi>=0.110 \
+    uvicorn[standard]>=0.29 \
+    httpx>=0.27 \
+    pydantic>=2.0 \
+    aiofiles>=23.0
 
-# Copy spine init
-COPY spine/init.jsonl /root/.openclaw/spine.jsonl 2>/dev/null || true
+COPY evez_gateway.py .
+COPY openclaw.json .
 
-# Install Python skills deps
-COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install --no-cache-dir -r /tmp/requirements.txt || true
-
-# Create data directory
-RUN mkdir -p /root/.openclaw/backup /root/.openclaw/logs
-
-ENV NODE_ENV=production
-ENV OPENCLAW_CONFIG_DIR=/root/.openclaw
-ENV HOME=/root
 ENV PORT=8080
+EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
+# Health check built-in
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
 
-EXPOSE 8080 18789 18790
-
-# Entrypoint: try openclaw gateway first, fallback to our own server
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-CMD ["/entrypoint.sh"]
+CMD ["uvicorn", "evez_gateway:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "2", "--loop", "uvloop"]
