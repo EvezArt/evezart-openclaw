@@ -61,7 +61,7 @@ fi
 
 # Install skills
 echo -e "  ${CYAN}[3/6]${NC} Installing skills..."
-SKILLS=(evez-os oktoklaw evez-fire-engine evez-revenue-bridge evez-spine-sync evez-mesh-router evez-aegis)
+SKILLS=(evez-os oktoklaw evez-fire-engine evez-revenue-bridge evez-spine-sync evez-mesh-router evez-aegis evez-fire-correlator)
 for skill in "${SKILLS[@]}"; do
     if [ -d "$EVEZ_DIR/skills/$skill" ]; then
         cp -r "$EVEZ_DIR/skills/$skill" "$SKILLS_DIR/"
@@ -89,7 +89,7 @@ echo -e "  ${CYAN}[6/6]${NC} Done."
 echo ""
 echo -e "  ${GREEN}╔══ EVEZ-OS INSTALLED ════════════════════════════════════╗${NC}"
 echo -e "  ${GREEN}║  Workspace:  ~/.openclaw/workspace/                     ║${NC}"
-echo -e "  ${GREEN}║  Skills:     7 installed                                ║${NC}"
+echo -e "  ${GREEN}║  Skills:     8 installed                                ║${NC}"
 echo -e "  ${GREEN}║  Hook:       evez-os (bootstrap injection)              ║${NC}"
 echo -e "  ${GREEN}╚═════════════════════════════════════════════════════════╝${NC}"
 echo ""
