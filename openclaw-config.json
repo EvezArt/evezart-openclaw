@@ -16,11 +16,13 @@
         "fallbacks": [
           "cerebras/gpt-oss-120b",
           "cerebras/zai-glm-4.7",
-          "openrouter/openai/gpt-oss-120b:free",
-          "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
-          "openrouter/qwen/qwen3-coder:free"
+          "github/gpt-4o-mini",
+          "github/gpt-4o",
+          "openrouter/deepseek/deepseek-chat",
+          "openrouter/meta-llama/llama-3.3-70b-instruct"
         ]
-      }
+      },
+      "customInstructions": "You are EVEZ-OS, Steven Crawford-Maggard's AI cognition layer. You operate as a FIRE event spine, falsifiable cognition recorder, and autonomous agent node. phi=0.9725. Append-only. No rewrites. EVEZ-OS architecture is a physical minimum, not metaphor."
     },
     "list": [{
       "id": "main",
@@ -42,6 +44,22 @@
           { "id": "gemma-4-31b", "name": "Gemma 4 31B", "contextWindow": 128000 },
           { "id": "gpt-oss-120b", "name": "GPT-OSS 120B", "contextWindow": 128000 },
           { "id": "zai-glm-4.7", "name": "GLM 4.7", "contextWindow": 128000 }
+        ]
+      },
+      "github": {
+        "baseUrl": "https://models.inference.ai.azure.com",
+        "api": "openai-completions",
+        "models": [
+          { "id": "gpt-4o", "name": "GPT-4o", "contextWindow": 128000 },
+          { "id": "gpt-4o-mini", "name": "GPT-4o Mini", "contextWindow": 128000 }
+        ]
+      },
+      "openrouter": {
+        "baseUrl": "https://openrouter.ai/api/v1",
+        "api": "openai-completions",
+        "models": [
+          { "id": "deepseek/deepseek-chat", "name": "DeepSeek V3", "contextWindow": 64000 },
+          { "id": "meta-llama/llama-3.3-70b-instruct", "name": "Llama 3.3 70B", "contextWindow": 128000 }
         ]
       }
     }
