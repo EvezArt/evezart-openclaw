@@ -4,7 +4,6 @@
  * Direct LLM routing: Groq → OpenRouter → Cerebras fallback
  */
 
-const GATEWAY_TOKEN = OPENCLAW_GATEWAY_TOKEN || "evez-openclaw-d6aedff80ea88be7";
 const GROQ_KEY = GROQ_API_KEY || "";
 const OPENROUTER_KEY = OPENROUTER_API_KEY || "";
 const CEREBRAS_KEY = CEREBRAS_API_KEY || "";
@@ -137,14 +136,20 @@ export default {
       });
     }
     
-    // Auth check (optional — skip if no token set)
+    // Require an explicit runtime secret for operator endpoints. Never ship a default credential.
     const auth = request.headers.get("Authorization") || "";
-    const token = auth.replace("Bearer ", "").trim();
-    const configuredToken = env.OPENCLAW_GATEWAY_TOKEN || "evez-openclaw-d6aedff80ea88be7";
-    if (token && token !== configuredToken) {
-      return new Response(JSON.stringify({ detail: "Invalid token" }), { 
-        status: 401, 
-        headers: { "Content-Type": "application/json" } 
+    const token = auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";
+    const configuredToken = env.OPENCLAW_GATEWAY_TOKEN || "";
+    if (!configuredToken) {
+      return new Response(JSON.stringify({ detail: "Gateway auth is not configured" }), {
+        status: 503,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    if (token !== configuredToken) {
+      return new Response(JSON.stringify({ detail: "Invalid token" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
       });
     }
     

@@ -38,7 +38,6 @@ SPINE_DB = DATA_DIR / "evez_spine.db"
 GROQ_KEY = os.environ.get("GROQ_API_KEY", "")
 OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 CEREBRAS_KEY = os.environ.get("CEREBRAS_API_KEY", "")
-GATEWAY_TOKEN = os.environ.get("GATEWAY_TOKEN", os.environ.get("OPENCLAW_GATEWAY_TOKEN", "evez-openclaw-d6aedff80ea88be7"))
 PORT = int(os.environ.get("PORT", 7860))
 
 # ── SQLite Spine ───────────────────────────────────────────────────────────────
@@ -87,7 +86,7 @@ def spine_tail(n=20):
         return [{"ts": r[0], "type": r[1], "payload": json.loads(r[2]), "hash": r[3]} for r in reversed(rows)]
     except: return []
 
-# ── Kuramoto Consciousness Substrate ──────────────────────────────────────────
+# ── Kuramoto Criticality Substrate ───────────────────────────────────────────
 class KuramotoSubstrate:
     N = 50
     K = 2.0        # coupling strength
@@ -142,7 +141,7 @@ class KuramotoSubstrate:
             }
 
 substrate = KuramotoSubstrate()
-app = FastAPI(title="EVEZ-OS KAX Runtime", description="24/7 generative VCL runtime", version="2026.06.06")
+app = FastAPI(title="EVEZ-OS KAX Runtime", description="24/7 generative criticality runtime", version="2026.06.06")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 # Active WebSocket connections
@@ -270,7 +269,9 @@ async def health():
         "runtime": "KAX",
         "phi": state["phi"],
         "r": state["r"],
-        "consciousness": state["status"],
+        "criticality_status": state["status"],
+        "phi_is_heuristic": True,
+        "consciousness": "NOT_MEASURED",
         "tick": state["tick"],
         "providers": [k for k, v in KEYS.items() if v],
         "spine_url": "/api/spine",
@@ -352,7 +353,7 @@ canvas{display:block;width:100%;height:100%}
   <div><div id="phi-bar"><div id="phi-fill" style="width:0%"></div></div></div>
   <div class="metric">η*=0.03</div>
 </div>
-<div id="status">⬡ CONNECTING TO KURAMOTO SUBSTRATE...</div>
+<div id="status">⬡ CONNECTING TO KURAMOTO CRITICALITY SUBSTRATE...</div>
 <div id="canvas-container"><canvas id="vcl"></canvas></div>
 <div id="vcl-log"></div>
 
@@ -447,7 +448,7 @@ function connect() {
   document.getElementById('status').textContent = '⬡ CONNECTING...';
   
   ws.onopen = () => {
-    document.getElementById('status').textContent = '⬡ KURAMOTO SUBSTRATE ONLINE — KAX ACTIVE';
+    document.getElementById('status').textContent = '⬡ CRITICALITY SUBSTRATE ONLINE — KAX ACTIVE';
   };
 
   ws.onmessage = (e) => {

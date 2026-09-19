@@ -4,10 +4,35 @@
     "mode": "local",
     "port": 18789,
     "bind": "lan",
-    "auth": { "mode": "password", "password": "evez-os-2026" },
-    "controlUi": { "allowedOrigins": ["*"], "dangerouslyDisableDeviceAuth": true },
-    "http": { "endpoints": { "chatCompletions": { "enabled": true } } },
-    "nodes": { "pairing": { "autoApproveCidrs": ["0.0.0.0/0"] }, "allowCommands": ["*"] }
+    "auth": {
+      "mode": "token",
+      "rateLimit": {
+        "maxAttempts": 10,
+        "windowMs": 60000,
+        "lockoutMs": 300000,
+        "exemptLoopback": true
+      }
+    },
+    "controlUi": {
+      "allowedOrigins": [
+        "http://localhost:18789",
+        "http://127.0.0.1:18789"
+      ],
+      "dangerouslyDisableDeviceAuth": false
+    },
+    "http": {
+      "endpoints": {
+        "chatCompletions": {
+          "enabled": true
+        }
+      }
+    },
+    "nodes": {
+      "pairing": {
+        "autoApproveCidrs": []
+      },
+      "allowCommands": []
+    }
   },
   "agents": {
     "defaults": {
@@ -22,17 +47,19 @@
           "openrouter/meta-llama/llama-3.3-70b-instruct"
         ]
       },
-      "customInstructions": "You are EVEZ-OS, Steven Crawford-Maggard's AI cognition layer. You operate as a FIRE event spine, falsifiable cognition recorder, and autonomous agent node. phi=0.9725. Append-only. No rewrites. EVEZ-OS architecture is a physical minimum, not metaphor."
+      "customInstructions": "You are EVEZ-OS, Steven Crawford-Maggard's AI cognition layer. You operate as a FIRE event spine, falsifiable cognition recorder, and autonomous agent node. phi is an experimental diagnostic proxy, not a consciousness measurement. Append-only. No rewrites. EVEZ-OS architecture is a physical minimum, not metaphor."
     },
-    "list": [{
-      "id": "main",
-      "default": true,
-      "identity": {
-        "name": "EVEZ-OS",
-        "theme": "EVEZ-OS cognition engine — append-only spine, f(x)=x",
-        "emoji": "🦞"
+    "list": [
+      {
+        "id": "main",
+        "default": true,
+        "identity": {
+          "name": "EVEZ-OS",
+          "theme": "EVEZ-OS cognition engine — append-only spine, f(x)=x",
+          "emoji": "🦞"
+        }
       }
-    }]
+    ]
   },
   "models": {
     "mode": "merge",
@@ -41,25 +68,53 @@
         "baseUrl": "https://api.cerebras.ai/v1",
         "api": "openai-completions",
         "models": [
-          { "id": "gemma-4-31b", "name": "Gemma 4 31B", "contextWindow": 128000 },
-          { "id": "gpt-oss-120b", "name": "GPT-OSS 120B", "contextWindow": 128000 },
-          { "id": "zai-glm-4.7", "name": "GLM 4.7", "contextWindow": 128000 }
+          {
+            "id": "gemma-4-31b",
+            "name": "Gemma 4 31B",
+            "contextWindow": 128000
+          },
+          {
+            "id": "gpt-oss-120b",
+            "name": "GPT-OSS 120B",
+            "contextWindow": 128000
+          },
+          {
+            "id": "zai-glm-4.7",
+            "name": "GLM 4.7",
+            "contextWindow": 128000
+          }
         ]
       },
       "github": {
         "baseUrl": "https://models.inference.ai.azure.com",
         "api": "openai-completions",
         "models": [
-          { "id": "gpt-4o", "name": "GPT-4o", "contextWindow": 128000 },
-          { "id": "gpt-4o-mini", "name": "GPT-4o Mini", "contextWindow": 128000 }
+          {
+            "id": "gpt-4o",
+            "name": "GPT-4o",
+            "contextWindow": 128000
+          },
+          {
+            "id": "gpt-4o-mini",
+            "name": "GPT-4o Mini",
+            "contextWindow": 128000
+          }
         ]
       },
       "openrouter": {
         "baseUrl": "https://openrouter.ai/api/v1",
         "api": "openai-completions",
         "models": [
-          { "id": "deepseek/deepseek-chat", "name": "DeepSeek V3", "contextWindow": 64000 },
-          { "id": "meta-llama/llama-3.3-70b-instruct", "name": "Llama 3.3 70B", "contextWindow": 128000 }
+          {
+            "id": "deepseek/deepseek-chat",
+            "name": "DeepSeek V3",
+            "contextWindow": 64000
+          },
+          {
+            "id": "meta-llama/llama-3.3-70b-instruct",
+            "name": "Llama 3.3 70B",
+            "contextWindow": 128000
+          }
         ]
       }
     }
