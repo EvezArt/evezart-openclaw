@@ -53,6 +53,7 @@ if (CEREBRAS_KEY && CEREBRAS_KEY.startsWith("csk-")) {
   providers.cerebras = {
     baseUrl: "https://api.cerebras.ai/v1",
     api: "openai-completions",
+    apiKey: "${CEREBRAS_API_KEY}",
     models: [
       { id: "gemma-4-31b", name: "Gemma 4 31B", contextWindow: 128000 },
     ],
@@ -66,6 +67,7 @@ if (GH_TOKEN) {
   providers.github = {
     baseUrl: "https://models.inference.ai.azure.com",
     api: "openai-completions",
+    apiKey: "${GITHUB_TOKEN}",
     models: [
       { id: "gpt-4o-mini", name: "GPT-4o Mini", contextWindow: 128000 },
       { id: "gpt-4o", name: "GPT-4o", contextWindow: 128000 },
@@ -82,7 +84,7 @@ if (GH_TOKEN) {
 if (GROQ_KEY && GROQ_KEY.startsWith("gsk_")) {
   providers.groq = {
     baseUrl: "https://api.groq.com/openai/v1",
-    apiKey: GROQ_KEY,
+    apiKey: "${GROQ_API_KEY}",
     api: "openai-completions",
     models: [
       { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B", contextWindow: 131072 },
@@ -94,6 +96,15 @@ if (GROQ_KEY && GROQ_KEY.startsWith("gsk_")) {
 
 // OpenRouter — last resort
 if (OR_KEY) {
+  providers.openrouter = {
+    baseUrl: "https://openrouter.ai/api/v1",
+    api: "openai-completions",
+    apiKey: "${OPENROUTER_API_KEY}",
+    models: [
+      { id: "openai/gpt-oss-120b:free", name: "OpenAI GPT-OSS 120B", contextWindow: 128000 },
+      { id: "nvidia/nemotron-3-super-120b-a12b:free", name: "NVIDIA Nemotron 3 Super", contextWindow: 128000 },
+    ],
+  };
   fallbacks.push("openrouter/openai/gpt-oss-120b:free", "openrouter/nvidia/nemotron-3-super-120b-a12b:free");
   modelCatalog["openrouter/openai/gpt-oss-120b:free"] = { alias: "OR GPT-OSS" };
 }
@@ -106,7 +117,7 @@ const config = {
     mode: "local",
     port: 18789,
     bind: "lan",
-    auth: { mode: "token" },
+    auth: { mode: "token", token: "${OPENCLAW_GATEWAY_TOKEN}" },
     controlUi: { allowedOrigins: ["http://localhost:18789", "http://127.0.0.1:18789"], dangerouslyDisableDeviceAuth: false },
     http: { endpoints: { chatCompletions: { enabled: true } } },
     nodes: { pairing: { autoApproveCidrs: [] }, allowCommands: [] },
