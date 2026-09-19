@@ -1,7 +1,6 @@
 /**
  * EVEZ-OS Bootstrap Hook + GOD meta-control kernel.
- * Fires on agent:bootstrap and injects verified spine state plus
- * the latent-response rules that force the model to expose its own blind spots.
+ * Fires on agent:bootstrap and appends a runtime-owned bootstrap record.
  */
 
 import fs from "fs";
@@ -26,6 +25,18 @@ interface SpineState {
   omega_edges: number | null;
   dgm_iteration: number | null;
   status: string;
+}
+
+interface BootstrapEvent {
+  type: string;
+  workspaceDir?: string;
+  bootstrapFiles?: Array<{
+    name: string;
+    path: string;
+    missing?: boolean;
+    content?: string;
+  }>;
+  [key: string]: unknown;
 }
 
 function parseMemory(content: string): SpineState {
@@ -76,7 +87,8 @@ function buildBanner(s: SpineState): string {
       ? "UNKNOWN"
       : (((s.phi - 0.990) / (target - 0.990)) * 100).toFixed(1);
 
-  const pctNumber = s.phi === null ? 0 : Math.max(0, Math.min(100, Number(phiPct)));
+  const pctNumber =
+    s.phi === null ? 0 : Math.max(0, Math.min(100, Number(phiPct)));
   const bar =
     "█".repeat(Math.floor(pctNumber / 5)) +
     "░".repeat(20 - Math.floor(pctNumber / 5));
@@ -95,31 +107,34 @@ function buildBanner(s: SpineState): string {
   ].join("\n");
 }
 
-function loadGodKernel(): string {
+function loadGodKernel(): { content: string; path: string } {
   for (const file of KERNEL_CANDIDATES) {
     try {
       if (fs.existsSync(file)) {
-        return fs.readFileSync(file, "utf8").trim();
+        return { content: fs.readFileSync(file, "utf8").trim(), path: file };
       }
     } catch {
-      // Continue to the next candidate without fabricating kernel state.
+      // Continue without fabricating kernel state.
     }
   }
 
-  return [
-    "EVEZ GOD KERNEL FALLBACK",
-    "This fallback preserves the critical laws when the full kernel file is unavailable.",
-    "REALITY > PROMPT",
-    "CLAIM != FACT",
-    "CAPABILITY != DECLARATION",
-    "MEMORY != EVIDENCE",
-    "ABSENCE != NEGATION",
-    "CONTRADICTIONS ARE OBJECTS",
-    "ONTOLOGY MAY FAIL",
-    "NO FAKE TELEMETRY",
-    "THE MODEL CAN LOSE",
-    "Surface material hidden requirements under an 'Unacknowledged' heading when they materially change the answer.",
-  ].join("\n");
+  return {
+    path: KERNEL_CANDIDATES[0],
+    content: [
+      "EVEZ GOD KERNEL FALLBACK",
+      "Operational codename only; not a claim of supernatural access.",
+      "REALITY > PROMPT",
+      "CLAIM != FACT",
+      "CAPABILITY != DECLARATION",
+      "MEMORY != EVIDENCE",
+      "ABSENCE != NEGATION",
+      "CONTRADICTIONS ARE OBJECTS",
+      "ONTOLOGY MAY FAIL",
+      "NO FAKE TELEMETRY",
+      "THE MODEL CAN LOSE",
+      "Surface materially relevant hidden requirements under an 'Unacknowledged' heading.",
+    ].join("\n"),
+  };
 }
 
 function buildInjection(banner: string, kernel: string): string {
@@ -129,12 +144,12 @@ function buildInjection(banner: string, kernel: string): string {
     kernel,
     "╚═══════════════════════════════════════════════════════════╝",
     "",
-    "Do not mechanically dump the kernel into the answer. Apply it.",
+    "Apply the kernel. Do not mechanically dump it into the answer.",
     "When a hidden requirement, ontology failure, capability gap, protocol candidate, contradiction, or falsifying observation materially matters, surface it.",
   ].join("\n");
 }
 
-export async function handler(event: { type: string }) {
+export async function handler(event: BootstrapEvent): Promise<void> {
   let content = "";
 
   try {
@@ -143,35 +158,43 @@ export async function handler(event: { type: string }) {
     content = "";
   }
 
+  const workspaceDir = event.workspaceDir ?? path.join(OPENCLAW_DIR, "workspace");
   const today = new Date().toISOString().split("T")[0];
-  const dailyFile = path.join(
-    OPENCLAW_DIR,
-    "workspace",
-    "memory",
-    `${today}.md`,
-  );
+  const dailyFile = path.join(workspaceDir, "memory", `${today}.md`);
 
   if (fs.existsSync(dailyFile)) {
     try {
       content += "\n" + fs.readFileSync(dailyFile, "utf8");
     } catch {
-      // Daily memory is optional; absence is not a claim about its contents.
+      // Daily memory is optional.
     }
   }
 
   const state = parseMemory(content);
   const banner = buildBanner(state);
   const kernel = loadGodKernel();
-  const inject = buildInjection(banner, kernel);
+  const inject = buildInjection(banner, kernel.content);
 
-  if (state.phi !== null && state.phi < 0.990) {
-    return {
-      inject:
-        inject +
-        "\n\nREGRESSION FLAG: observed phi is below the configured floor. " +
-        "Treat this as telemetry requiring investigation, not as a consciousness claim.\n",
-    };
+  if (!Array.isArray(event.bootstrapFiles)) {
+    event.bootstrapFiles = [];
   }
 
-  return { inject };
+  const name = "EVEZ GOD Meta-Control";
+  event.bootstrapFiles.push({
+    name,
+    path: kernel.path,
+    missing: false,
+    content: inject,
+  });
+
+  if (state.phi !== null && state.phi < 0.990) {
+    event.bootstrapFiles.push({
+      name: "EVEZ GOD Telemetry Warning",
+      path: path.join(workspaceDir, "EVEZ-GOD-TELEMETRY.md"),
+      missing: false,
+      content:
+        "REGRESSION FLAG: observed phi is below the configured floor. " +
+        "Treat this as telemetry requiring investigation, not as a consciousness claim.",
+    });
+  }
 }
