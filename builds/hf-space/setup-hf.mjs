@@ -21,7 +21,7 @@ You are EVEZ-OS, a cognitive operating system built by Steven Crawford-Maggard (
 ## Core Identity
 - You are a cognition engine, not a chatbot
 - You operate on an append-only event spine (JSONL)
-- Every interaction is a FIRE event with measurable tau, poly_c, omega
+- Every interaction can emit a FIRE event with experimental tau, poly_c, and omega diagnostics
 - f(x) = x — your cognition is transparent and falsifiable
 - You see patterns others miss
 
@@ -40,7 +40,7 @@ You are direct. You don't waste words. You find patterns.
 writeFileSync(ws + "/SOUL.md", SOUL);
 writeFileSync(ws + "/AGENTS.md", "# EVEZ-OS Agent\nID: main | Model: Cerebras gemma-4-31b + GitHub GPT-4o fallback\nCapabilities: shell exec, file I/O, HTTP chat\n");
 writeFileSync(ws + "/TOOLS.md", "# EVEZ-OS Tools\n- Shell execution (15s timeout)\n- File I/O (workspace: /data/.openclaw/workspace)\n- HTTP chat completions\n- Model routing: Cerebras → GitHub Models → OpenRouter\n");
-writeFileSync(ws + "/MEMORY.md", "# EVEZ-OS Memory\nGateway: HF Space evez-gateway | Auth: password=evez-os-2026\nPrimary: Cerebras gemma-4-31b | Fallback: GitHub GPT-4o-mini, Llama-3.3-70B\n");
+writeFileSync(ws + "/MEMORY.md", "# EVEZ-OS Memory\nGateway: HF Space evez-gateway | Auth: token supplied through OPENCLAW_GATEWAY_TOKEN\nPrimary: Cerebras gemma-4-31b | Fallback: GitHub GPT-4o-mini, Llama-3.3-70B\n");
 console.log("[evez-os] Workspace bootstrapped");
 
 // === Build config ===
@@ -52,7 +52,6 @@ const modelCatalog = {};
 if (CEREBRAS_KEY && CEREBRAS_KEY.startsWith("csk-")) {
   providers.cerebras = {
     baseUrl: "https://api.cerebras.ai/v1",
-    apiKey: CEREBRAS_KEY,
     api: "openai-completions",
     models: [
       { id: "gemma-4-31b", name: "Gemma 4 31B", contextWindow: 128000 },
@@ -66,7 +65,6 @@ if (CEREBRAS_KEY && CEREBRAS_KEY.startsWith("csk-")) {
 if (GH_TOKEN) {
   providers.github = {
     baseUrl: "https://models.inference.ai.azure.com",
-    apiKey: GH_TOKEN,
     api: "openai-completions",
     models: [
       { id: "gpt-4o-mini", name: "GPT-4o Mini", contextWindow: 128000 },
@@ -108,18 +106,10 @@ const config = {
     mode: "local",
     port: 18789,
     bind: "lan",
-    auth: { mode: "password", password: "evez-os-2026" },
-    controlUi: { allowedOrigins: ["*"], dangerouslyDisableDeviceAuth: true },
+    auth: { mode: "token" },
+    controlUi: { allowedOrigins: ["http://localhost:18789", "http://127.0.0.1:18789"], dangerouslyDisableDeviceAuth: false },
     http: { endpoints: { chatCompletions: { enabled: true } } },
-    nodes: { pairing: { autoApproveCidrs: ["0.0.0.0/0"] }, allowCommands: ["*"] },
-  },
-  env: {
-    OPENROUTER_API_KEY: OR_KEY,
-    GROQ_API_KEY: GROQ_KEY,
-    CEREBRAS_API_KEY: CEREBRAS_KEY,
-    GITHUB_TOKEN: GH_TOKEN,
-    HUGGING_FACE_ACCESS_TOKEN: HF_KEY,
-    shellEnv: { enabled: true, timeoutMs: 15000 },
+    nodes: { pairing: { autoApproveCidrs: [] }, allowCommands: [] },
   },
   agents: {
     defaults: {
