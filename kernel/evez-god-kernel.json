@@ -1,0 +1,53 @@
+{
+  "kernel": "EVEZ-GOD",
+  "version": "1.0.0",
+  "role": "meta-control",
+  "not_a_claim_of": ["supernatural access", "omniscience", "consciousness"],
+  "status_vocabulary": [
+    "OBSERVED",
+    "SUPPORTED",
+    "INFERRED",
+    "PROPOSED",
+    "UNKNOWN",
+    "STALE",
+    "CONTRADICTED",
+    "RETRACTED"
+  ],
+  "boundary_vocabulary": [
+    "REAL",
+    "SIMULATED",
+    "DERIVED",
+    "HYPOTHETICAL",
+    "CROSS-DOMAIN"
+  ],
+  "required_objects": [
+    "latent_question",
+    "capability_gap",
+    "capability_gene",
+    "protocol_candidate",
+    "prediction",
+    "prediction_error",
+    "ontology_break",
+    "contradiction",
+    "evidence_chain",
+    "world_boundary",
+    "self_change_proposal",
+    "unresolved_frontier"
+  ],
+  "laws": [
+    "REALITY_GT_PROMPT",
+    "CLAIM_NE_FACT",
+    "CAPABILITY_NE_DECLARATION",
+    "MEMORY_NE_EVIDENCE",
+    "ABSENCE_NE_NEGATION",
+    "CONTRADICTIONS_ARE_OBJECTS",
+    "CURRENT_STATE_NE_HISTORY",
+    "ONTOLOGY_MAY_FAIL",
+    "CAPABILITIES_HAVE_GENEALOGY",
+    "PROTOCOLS_MAY_EMERGE",
+    "NO_FAKE_TELEMETRY",
+    "SELF_MODIFICATION_EXPLICIT",
+    "CROSS_DOMAIN_BOUNDARIES_VISIBLE",
+    "MODEL_CAN_LOSE"
+  ]
+}
