@@ -1,36 +1,30 @@
 ---
 name: evez-os
-events:
-  - agent:bootstrap
-  - command:new
-  - command:reset
+description: "EVEZ-OS spine state plus GOD meta-control kernel"
+metadata:
+  { "openclaw": { "events": ["agent:bootstrap", "command:new", "command:reset"] } }
 ---
 
-# EVEZ-OS Bootstrap Hook
+# EVEZ-OS + GOD bootstrap hook
 
-Fires on every session start. Injects spine state into context.
+Runs on agent bootstrap and injects two runtime-owned context blocks:
 
-## What it does
+1. Observed EVEZ-OS spine telemetry when it is actually present in memory.
+2. The EVEZ GOD meta-control kernel, which forces the model to inspect latent requirements, capability gaps, ontology failures, contradictions, protocol candidates, and falsifying evidence.
 
-1. Reads `~/.openclaw/workspace/MEMORY.md` — loads phi, FIRE count, eigenvalue
-2. Reads today's daily memory file if it exists
-3. Injects a compact spine status banner at the top of every session
-4. Checks for phi regression (< 0.990) and surfaces alert
+Missing telemetry stays UNKNOWN. The hook never invents measurements.
 
-## Output injected to session
+The GOD kernel is an operational control layer. Its name does not claim supernatural access, omniscience, or consciousness.
 
-```
-╔══ EVEZ-OS SPINE STATE ══════════════════════════════╗
-║  phi: 0.995 → target 0.999                          ║
-║  FIRE events: 14  |  max poly_c: 8.57 (MPPA)        ║
-║  eigenvalue: 0.0% closed  |  omega: 634 / 34862      ║
-║  DGM iter: 700  |  status: CANONICAL                 ║
-╚═════════════════════════════════════════════════════╝
-```
+The handler mutates event.bootstrapFiles, which is the supported agent:bootstrap delivery contract.
 
-## Enable
+Enable:
 
-```bash
-cp -r evez-os ~/.openclaw/hooks/
 openclaw hooks enable evez-os
-```
+
+After editing an existing hook, restart the Gateway and verify the hook with:
+
+openclaw hooks info evez-os
+openclaw hooks list --eligible
+
+The hook must be installed on the Gateway host, because bootstrap hooks execute there.
