@@ -149,7 +149,7 @@ function buildInjection(banner: string, kernel: string): string {
   ].join("\n");
 }
 
-export async function handler(event: BootstrapEvent): Promise<void> {
+export default async function handler(event: BootstrapEvent): Promise<void> {
   let content = "";
 
   try {
