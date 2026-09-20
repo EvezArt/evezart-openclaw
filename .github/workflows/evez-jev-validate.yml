@@ -1,0 +1,26 @@
+name: EvezJev validation
+
+on:
+  pull_request:
+    paths:
+      - 'docs/evez-jev/**'
+      - 'config/evez-jev.example.json'
+      - 'android/evez-jev-companion.md'
+      - '.github/workflows/evez-jev-validate.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate example configuration
+        run: python -m json.tool config/evez-jev.example.json >/dev/null
+      - name: Reject credential-shaped literals
+        run: |
+          ! grep -R -nE '(sk-[A-Za-z0-9_-]{12,}|ghp_[A-Za-z0-9]{20,}|[0-9]{8,}:[A-Za-z0-9_-]{20,})' docs/evez-jev config/evez-jev.example.json android/evez-jev-companion.md
+      - name: Confirm financial guardrails
+        run: |
+          grep -q '"liveOrders": false' config/evez-jev.example.json
+          grep -q '"withdrawals": false' config/evez-jev.example.json
+          grep -q 'human_review' config/evez-jev.example.json

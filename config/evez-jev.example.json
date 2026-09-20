@@ -1,0 +1,39 @@
+{
+  "product": "evez-jev",
+  "decision": {
+    "provider": "typesafe",
+    "model": "jev-latest",
+    "enabled": false,
+    "questionTypes": ["choice", "score", "noul"],
+    "minConfidenceForAutomation": 0.9,
+    "lowConfidenceAction": "human_review"
+  },
+  "routing": {
+    "fast": "groq",
+    "reasoning": "openrouter",
+    "local": "ollama",
+    "offline": "queue_only"
+  },
+  "mobile": {
+    "device": "Samsung Galaxy A16",
+    "offlineQueue": true,
+    "syncMode": "authenticated-idempotent",
+    "publicExposure": false
+  },
+  "finance": {
+    "mode": "research_and_paper_trade",
+    "liveOrders": false,
+    "withdrawals": false
+  },
+  "publishing": {
+    "telegram": "review_required",
+    "x": "review_required",
+    "github": "branch_and_ci"
+  },
+  "secrets": {
+    "typesafeApiKey": "secret-store:TYPESAFE_API_KEY",
+    "openrouterApiKey": "secret-store:OPENROUTER_API_KEY",
+    "githubToken": "secret-store:GITHUB_TOKEN",
+    "telegramBotToken": "secret-store:TELEGRAM_BOT_TOKEN"
+  }
+}
