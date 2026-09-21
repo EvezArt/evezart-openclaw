@@ -1,0 +1,13 @@
+EVEZ Buyer Demo Test Cases
+
+Fixture-level tests only. Not claimed as production executions.
+
+ACCEPT
+POST /evez-demo/intake
+{"customer_id":"demo-001","request":"Create a lead-routing workflow"}
+Expected: ok=true, status=ACCEPTED, 64-character SHA-256 proof_hash.
+
+REJECT
+POST /evez-demo/intake
+{"customer_id":"demo-002"}
+Expected: ok=false, status=REJECTED, reason=missing_required_fields, missing includes request.
